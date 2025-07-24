@@ -1,0 +1,47 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "gmspy"
+version = "0.2.0"
+description = "Ground Motions Processing for Python"
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [
+  { name = "Yexiang Yan", email = "yexiang_yan@outlook.com" }
+]
+license = { text = 'GPL Licence' }
+keywords = ["Ground Motions", "Seismic", "Response spectra", "Intensity Measures", "IMs"]
+dependencies = [
+  "matplotlib",
+  "numpy",
+  "scipy",
+  "joblib",
+  "numba",
+  "rich"
+]
+
+[project.urls]
+Homepage = "https://github.com/yexiang1992/gmspy"
+
+[tool.hatch.metadata]
+# Customize file inclusion/exclusion if needed
+
+[tool.hatch.version]
+# Optional: synchronize the version with a Python file
+path = "gmspy/__about__.py"
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "black",
+  "mkdocs",
+  "mkdocs-material",
+  "mkdocstrings[python]"
+]
+docs = [
+  "mkdocs",
+  "mkdocs-material",
+  "mkdocstrings[python]"
+]

@@ -4,3 +4,8 @@ scipy
 joblib
 numba
 rich
+
+mkdocs
+mkdocs-material
+mkdocstrings[python]
+mkdocs-jupyter

@@ -1,0 +1,85 @@
+site_name: GMSpy Documentation
+repo_url: https://github.com/yexiang1992/gmspy
+nav:
+  - Home: 'index.md'
+  - Getting Started: 
+    - Intensity Measures: 'intro-ims.ipynb'
+    - Preprocessing: 'intro-pre.ipynb'
+    - Linear Dynamic Time-History Analysis: 'intro-lida.ipynb'
+    - Verification: 'verification.md'
+  - Examples:
+    - Baseline Correction: 'examples/01_baseline_correction.ipynb'
+    - Filtering: 'examples/02_filtering.ipynb'
+    - Resampling: 'examples/03_resample.ipynb'
+    - Linear Dynamic Time-History Analysis of SDOF System: 'examples/04_lida.ipynb'
+    - Elastic response spectra: 'examples/05_elas.ipynb'
+    - Constant ductility response spectra: 'examples/06_cdsp.ipynb'
+  - API Reference: 'api.md'
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            paths: ["gmspy"]
+            docstring_section_style: table
+            docstring_style: numpy
+            filters: ["!^_"]
+            inherited_members: true
+            merge_init_into_class: true
+            parameter_headings: false
+            separate_signature: true
+            show_docstring_attributes: false
+            show_docstring_modules: false
+            show_object_full_path: false
+            show_root_heading: true
+            show_root_members_full_path: false
+            show_signature_annotations: true
+            show_source: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            heading_level: 2
+  - mkdocs-jupyter
+
+theme:
+  name: material
+  logo: images/logo.png
+  features:
+    - content.code.copy
+    - content.tabs.link
+    - navigation.footer
+    - navigation.path
+    - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - search.highlight
+    - search.suggest
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - abbr
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.blocks.caption
+  - pymdownx.details
+  - pymdownx.tilde
+  - pymdownx.highlight
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
