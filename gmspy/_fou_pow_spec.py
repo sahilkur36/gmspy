@@ -6,9 +6,10 @@ from scipy.fft import fft, fftfreq
 
 
 def fou_pow_spec(
-        ts: Union[list, tuple, np.ndarray],
-        acc: Union[list, tuple, np.ndarray],
-        plot: bool = False):
+    ts: Union[list, tuple, np.ndarray],
+    acc: Union[list, tuple, np.ndarray],
+    plot: bool = False,
+):
     """The Fourier Amplitude Spectrum and the Power Spectrum (or Power Spectral Density Function)
     are computed by means of Fast Fourier Transformation (FFT) of the input time-history.
 
@@ -41,9 +42,9 @@ def fou_pow_spec(
     """
     n = len(acc)
     dt = ts[1] - ts[0]
-    af = fft(acc)[:n//2] / n
+    af = fft(acc)[: n // 2] / n
     amp = 2.0 * np.abs(af)
-    freq = fftfreq(n, d=dt)[:n//2]
+    freq = fftfreq(n, d=dt)[: n // 2]
     df = freq[1] - freq[0]
     phase = np.angle(af)  # Fourier Phase
     # Power Spectral Amplitude
@@ -54,17 +55,25 @@ def fou_pow_spec(
         fig, axs = plt.subplots(4, 1, figsize=(10, 15))
         plot_x = [ts, freq, freq, freq]
         plot_y = [acc, amp, pow_amp, phase]
-        xlabels = ['Time(s)', "frequency(Hz)",
-                   "frequency(Hz)", "frequency(Hz)"]
-        ylabels = ['acceleration', "Fourier Amplitude",
-                   "Power Amplitude", "Phase Angle"]
+        xlabels = ["Time(s)", "frequency(Hz)", "frequency(Hz)", "frequency(Hz)"]
+        ylabels = [
+            "acceleration",
+            "Fourier Amplitude",
+            "Power Amplitude",
+            "Phase Angle",
+        ]
         for i in range(4):
             ax = axs[i]
             if i < 3:
-                ax.plot(plot_x[i], plot_y[i], c='k', lw=1)
+                ax.plot(plot_x[i], plot_y[i], c="k", lw=1)
             else:
-                ax.plot(plot_x[i], plot_y[i], 'o', c='k', )
-                ax.set_aspect('equal')
+                ax.plot(
+                    plot_x[i],
+                    plot_y[i],
+                    "o",
+                    c="k",
+                )
+                ax.set_aspect("equal")
             ax.set_xlabel(xlabels[i], fontsize=15)
             ax.set_ylabel(ylabels[i], fontsize=15)
             ax.tick_params(labelsize=12)

@@ -21,9 +21,9 @@ class SeismoGM:
     See the following references for details on IMs:
 
     * [1] Hariri-Ardebili M A, Saouma V E. Probabilistic seismic demand model and optimal intensity measure
-      for concrete dams[J]. Structural Safety, 2016, 59: 67-85. .. _DOI: https://doi.org/10.1016/j.strusafe.2015.12.001
+      for concrete dams[J]. Structural Safety, 2016, 59: 67-85. .. DOI: `https://doi.org/10.1016/j.strusafe.2015.12.001 <https://doi.org/10.1016/j.strusafe.2015.12.001>`_
     * [2] Yan Y, Xia Y, Yang J, et al. Optimal selection of scalar and vector-valued seismic intensity
-      measures based on Gaussian Process Regression[J]. Soil Dynamics and Earthquake Engineering, 2022, 152: 106961. .. _DOI: https://doi.org/10.1016/j.soildyn.2021.106961
+      measures based on Gaussian Process Regression[J]. Soil Dynamics and Earthquake Engineering, 2022, 152: 106961. .. DOI: `https://doi.org/10.1016/j.soildyn.2021.106961 <https://doi.org/10.1016/j.soildyn.2021.106961>`_
 
     Parameters
     -----------
@@ -36,7 +36,9 @@ class SeismoGM:
 
     """
 
-    def __init__(self, dt: float, acc: Union[list, tuple, np.ndarray], unit: str = "g") -> None:
+    def __init__(
+        self, dt: float, acc: Union[list, tuple, np.ndarray], unit: str = "g"
+    ) -> None:
         self.dt = dt
         self.acc = np.array(acc)
         if np.abs(self.acc[0]) > 1e-5:
@@ -103,15 +105,11 @@ class SeismoGM:
         self.set_units(acc=unit, vel="cm", disp="cm", verbose=False)
 
         # colors
-        self.colors = [
-            "#037ef3", "#f85a40", "#00c16e", "#7552cc", "#0cb9c1", "#f48924"
-        ]
+        self.colors = ["#037ef3", "#f85a40", "#00c16e", "#7552cc", "#0cb9c1", "#f48924"]
 
-    def set_units(self,
-                  acc: str = "g",
-                  vel: str = "cm",
-                  disp: str = "cm",
-                  verbose: bool = True):
+    def set_units(
+        self, acc: str = "g", vel: str = "cm", disp: str = "cm", verbose: bool = True
+    ):
         """Specify the unit of input acceleration time-history and the units of output velocity and displacement.
 
         Parameters
@@ -138,13 +136,14 @@ class SeismoGM:
         self.disp *= self.disp_factor
         acc_end = "" if self.acc_unit == "g" else "/s2"
         if verbose:
-            print(f"[#0099e5]acc-unit: {self.acc_unit}{acc_end};[/]\n"
-                  f"[#ff4c4c]vel-unit；{self.vel_unit}/s;[/]\n"
-                  f"[#34bf49]disp-unit: {self.disp_unit}[/]")
+            print(
+                f"[#0099e5]acc-unit: {self.acc_unit}{acc_end};[/]\n"
+                f"[#ff4c4c]vel-unit；{self.vel_unit}/s;[/]\n"
+                f"[#34bf49]disp-unit: {self.disp_unit}[/]"
+            )
 
     def plot_hist(self):
-        """Plot the time-histories.
-        """
+        """Plot the time-histories."""
         acc_unit_end = "" if self.acc_unit == "g" else "/$s^2$"
         vel_unit_end = "/s"
         ylabels = [
@@ -189,7 +188,9 @@ class SeismoGM:
         """
         return self.acc, self.vel, self.disp
 
-    def get_truncate_hists(self, lower: float = 0.05, upper: float = 0.95, return_idx: bool = False):
+    def get_truncate_hists(
+        self, lower: float = 0.05, upper: float = 0.95, return_idx: bool = False
+    ):
         """Returns the truncated time-histories for lower-upper Arias intensity.
 
         Parameters
@@ -355,8 +356,7 @@ class SeismoGM:
 
     def get_d_v(self):
         """Peak displacement and velocity ratio (PGD/PGV)."""
-        d_v = self.get_pgd() / self.disp_factor / (self.get_pgv() /
-                                                   self.vel_factor)
+        d_v = self.get_pgd() / self.disp_factor / (self.get_pgv() / self.vel_factor)
         return d_v
 
     def get_eda(self, freq=9):
@@ -369,12 +369,9 @@ class SeismoGM:
         freq: float, default=9HZ
             Frequency threshold.
         """
-        acc_filter = freq_filt(self.dt,
-                               self.acc,
-                               ftype="Butterworth",
-                               btype="lowpass",
-                               order=5,
-                               freq1=freq)
+        acc_filter = freq_filt(
+            self.dt, self.acc, ftype="Butterworth", btype="lowpass", order=5, freq1=freq
+        )
         eda = np.max(np.abs(acc_filter))
         return eda
 
@@ -397,8 +394,7 @@ class SeismoGM:
         """
         # time history of Arias Intensity
         acc = self.acc * self.unit_factors[f"{self.acc_unit}-m"]
-        series = np.pi / 2 / 9.81 * cumulative_trapezoid(
-            acc**2, self.time, initial=0)
+        series = np.pi / 2 / 9.81 * cumulative_trapezoid(acc**2, self.time, initial=0)
         # Total Arias Intensity at the end of the ground motion
         arias = series[-1]
         # time history of the normalized Arias Intensity
@@ -430,11 +426,17 @@ class SeismoGM:
         kp2 = np.array([False, *kth2])
         kp22 = np.array([*kth2, False])
         timed01 = (
-            np.abs(y0 - accsig[kp1]) * np.abs(timed[kp11] - timed[kp1]) /
-            np.abs(accsig[kp11] - accsig[kp1]) + timed[kp1])
+            np.abs(y0 - accsig[kp1])
+            * np.abs(timed[kp11] - timed[kp1])
+            / np.abs(accsig[kp11] - accsig[kp1])
+            + timed[kp1]
+        )
         timed02 = (
-            np.abs(y0 - accsig[kp22]) * np.abs(timed[kp2] - timed[kp22]) /
-            np.abs(accsig[kp2] - accsig[kp22]) + timed[kp22])
+            np.abs(y0 - accsig[kp22])
+            * np.abs(timed[kp2] - timed[kp22])
+            / np.abs(accsig[kp2] - accsig[kp22])
+            + timed[kp22]
+        )
         timed0 = np.hstack((timed01, timed02))
         timed0 = np.sort(timed0)
         nzero = len(timed0) / (timed[-1] - timed[0] + self.dt)
@@ -450,8 +452,9 @@ class SeismoGM:
             idxzero2 = np.argwhere(np.abs(time2 - time1[i + 1]) <= 1e-8)
             idxzero1 = idxzero1[0, 0]
             idxzero2 = idxzero2[0, 0]
-            iv[i] = trapezoid(acc[idxzero1:idxzero2 + 1],
-                             time2[idxzero1:idxzero2 + 1])
+            iv[i] = trapezoid(
+                acc[idxzero1 : idxzero2 + 1], time2[idxzero1 : idxzero2 + 1]
+            )
         return iv
 
     def get_miv(self):
@@ -475,11 +478,17 @@ class SeismoGM:
         kp2 = np.array([False, *kth2])
         kp22 = np.array([*kth2, False])
         timed01 = (
-            np.abs(y0 - accsigDura[kp1]) * np.abs(timed[kp11] - timed[kp1]) /
-            np.abs(accsigDura[kp11] - accsigDura[kp1]) + timed[kp1])
+            np.abs(y0 - accsigDura[kp1])
+            * np.abs(timed[kp11] - timed[kp1])
+            / np.abs(accsigDura[kp11] - accsigDura[kp1])
+            + timed[kp1]
+        )
         timed02 = (
-            np.abs(y0 - accsigDura[kp22]) * np.abs(timed[kp2] - timed[kp22]) /
-            np.abs(accsigDura[kp2] - accsigDura[kp22]) + timed[kp22])
+            np.abs(y0 - accsigDura[kp22])
+            * np.abs(timed[kp2] - timed[kp22])
+            / np.abs(accsigDura[kp2] - accsigDura[kp22])
+            + timed[kp22]
+        )
         timed0 = np.hstack((timed01, timed02))
         timed0 = np.sort(timed0)
         Y0 = np.zeros(len(timed0)) + y0
@@ -514,8 +523,8 @@ class SeismoGM:
         timed = self.time[idx_5_95]
         accsigDura = self.acc[idx_5_95]
         Pa = trapezoid(accsigDura**2, timed) / (timed[-1] - timed[0])
-        Pv = trapezoid(self.vel[idx_5_95]**2, timed) / (timed[-1] - timed[0])
-        Pd = trapezoid(self.disp[idx_5_95]**2, timed) / (timed[-1] - timed[0])
+        Pv = trapezoid(self.vel[idx_5_95] ** 2, timed) / (timed[-1] - timed[0])
+        Pd = trapezoid(self.disp[idx_5_95] ** 2, timed) / (timed[-1] - timed[0])
         return Pa, Pv, Pd
 
     def get_ravd(self):
@@ -524,9 +533,9 @@ class SeismoGM:
         PGA = self.get_pga()
         PGV = self.get_pgv()
         PGD = self.get_pgd()
-        Ra = PGA * Td_5_95**(1 / 3)
-        Rv = PGV**(2 / 3) * Td_5_95**(1 / 3)
-        Rd = PGD * Td_5_95**(1 / 3)
+        Ra = PGA * Td_5_95 ** (1 / 3)
+        Rv = PGV ** (2 / 3) * Td_5_95 ** (1 / 3)
+        Rd = PGD * Td_5_95 ** (1 / 3)
         return Ra, Rv, Rd
 
     def get_if(self):
@@ -604,13 +613,13 @@ class SeismoGM:
             Unit must be m/s2.  See ``get_cavdi5()``.
         """
         ts = np.arange(np.floor(self.time[-1]) + 1)
-        acc = self.acc / self.unit_factors[f"g-{self.acc_unit}"]   # to g
+        acc = self.acc / self.unit_factors[f"g-{self.acc_unit}"]  # to g
 
         factors = np.zeros_like(self.acc)
         if acc_cutoff_level is None:
             factors += 1.0
         else:
-            idx = np.abs(acc) >= acc_cutoff_level / 9.81   # to g
+            idx = np.abs(acc) >= acc_cutoff_level / 9.81  # to g
             factors[idx] = 1.0
         acc *= factors
 
@@ -622,10 +631,10 @@ class SeismoGM:
         cavs = []
         for i in range(len(idxs) - 1):
             p = trapezoid(
-                np.abs(acc[idxs[i]:idxs[i + 1] + 1]),
-                self.time[idxs[i]:idxs[i + 1] + 1],
+                np.abs(acc[idxs[i] : idxs[i + 1] + 1]),
+                self.time[idxs[i] : idxs[i + 1] + 1],
             )
-            pgai = np.max(np.abs(acc[idxs[i]:idxs[i + 1] + 1]))
+            pgai = np.max(np.abs(acc[idxs[i] : idxs[i + 1] + 1]))
             a = 0 if pgai - 0.025 < 0 else 1
             cavs.append(a * p)
         cavstd = np.sum(cavs)
@@ -657,7 +666,7 @@ class SeismoGM:
         PGV = self.get_pgv()
         vel1 = self.vel[0:-1]
         vel2 = self.vel[1:]
-        Ldv = np.sum(np.sqrt((vel2 - vel1)**2 + self.dt**2))
+        Ldv = np.sum(np.sqrt((vel2 - vel1) ** 2 + self.dt**2))
         Ip = Ldv / PGV
         return Ip
 
@@ -712,11 +721,17 @@ class SeismoGM:
         kp2 = np.array([False, *kth2])
         kp22 = np.array([*kth2, False])
         timed01 = (
-            np.abs(y0 - acc[kp1]) * np.abs(self.time[kp11] - self.time[kp1]) /
-            np.abs(acc[kp11] - acc[kp1]) + self.time[kp1])
+            np.abs(y0 - acc[kp1])
+            * np.abs(self.time[kp11] - self.time[kp1])
+            / np.abs(acc[kp11] - acc[kp1])
+            + self.time[kp1]
+        )
         timed02 = (
-            np.abs(y0 - acc[kp22]) * np.abs(self.time[kp2] - self.time[kp22]) /
-            np.abs(acc[kp2] - acc[kp22]) + self.time[kp22])
+            np.abs(y0 - acc[kp22])
+            * np.abs(self.time[kp2] - self.time[kp22])
+            / np.abs(acc[kp2] - acc[kp22])
+            + self.time[kp22]
+        )
         T_ud = np.sum(timed02 - timed01)
         return T_ud
 
@@ -769,15 +784,10 @@ class SeismoGM:
             *acceleration spectrum*, *velocity spectrum* and *displacement spectrum* in turn.
         """
         Ts = np.atleast_1d(Ts)
-        output = elas_resp_spec(self.dt,
-                                self.acc,
-                                Ts,
-                                damp_ratio=damp_ratio,
-                                method=method,
-                                n_jobs=n_jobs)
-        output *= np.array(
-            [1, self.vel_factor, 1, self.vel_factor, self.disp_factor]
+        output = elas_resp_spec(
+            self.dt, self.acc, Ts, damp_ratio=damp_ratio, method=method, n_jobs=n_jobs
         )
+        output *= np.array([1, self.vel_factor, 1, self.vel_factor, self.disp_factor])
         if plot:
             acc_unit_end = "" if self.acc_unit == "g" else "/$s^2$"
             vel_unit_end = "/s"
@@ -869,7 +879,8 @@ class SeismoGM:
             n_jobs,
         )
         output *= np.array(
-            [1, self.vel_factor, self.disp_factor, self.disp_factor, 1, 1])
+            [1, self.vel_factor, self.disp_factor, self.disp_factor, 1, 1]
+        )
         if plot:
             acc_unit_end = "" if self.acc_unit == "g" else "/$s^2$"
             vel_unit_end = "/s"
@@ -1057,15 +1068,17 @@ class SeismoGM:
         output1 = np.atleast_2d(output1)
         output2 = np.atleast_2d(output2)
         sa1, sa2 = output1[:, 2], output2[:, 2]
-        sa_mp = sa1**(m1 / (m1 + m2)) * sa2**(m2 / (m1 + m2))
+        sa_mp = sa1 ** (m1 / (m1 + m2)) * sa2 ** (m2 / (m1 + m2))
         if len(sa_mp) == 1:
             sa_mp = sa_mp[0]
         return sa_mp
 
-    def get_avgsavd(self,
-                    Tavg: Union[list, tuple, np.ndarray],
-                    damp_ratio: float = 0.05,
-                    n_jobs: int = 0):
+    def get_avgsavd(
+        self,
+        Tavg: Union[list, tuple, np.ndarray],
+        damp_ratio: float = 0.05,
+        n_jobs: int = 0,
+    ):
         """Average Spectral Acceleration, Velocity and Displacement.
         They are computed as the geometric mean.
 
@@ -1169,8 +1182,9 @@ class SeismoGM:
         PSv = output[:, 1]
         HSIidxLow = np.argwhere(np.abs(self.Tsp - 0.1) <= 1e-8).item()
         HSIidxTop = np.argwhere(np.abs(self.Tsp - 2.5) <= 1e-8).item()
-        hsi = 1 / 2.4 * trapezoid(PSv[HSIidxLow:HSIidxTop],
-                              self.Tsp[HSIidxLow:HSIidxTop])
+        hsi = (
+            1 / 2.4 * trapezoid(PSv[HSIidxLow:HSIidxTop], self.Tsp[HSIidxLow:HSIidxTop])
+        )
         return hsi
 
     def get_epavd(self, damp_ratio: float = 0.05):
@@ -1292,4 +1306,6 @@ def _get_ims_unit(self):
 #     ylim = (np.min(Sv) / 1.5, np.max(Sv) * 1.5)
 #     fig, ax = plt.subplots(figsize=(15, 10))
 #     ax.loglog(Ts, Sv, lw=3, c='#0504aa', zorder=10)
+#     return None
+#     return None
 #     return None

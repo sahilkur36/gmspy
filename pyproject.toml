@@ -19,7 +19,7 @@ dependencies = [
   "scipy",
   "joblib",
   "numba",
-  "rich"
+  "rich",
 ]
 
 [project.urls]

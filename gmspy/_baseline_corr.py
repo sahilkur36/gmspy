@@ -1,12 +1,9 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy.integrate import cumulative_trapezoid
 
 
-def baselinecorr(ts: list,
-                 acc: list,
-                 poly_degree: int = 1,
-                 plot: bool = False):
+def baselinecorr(ts: list, acc: list, poly_degree: int = 1, plot: bool = False):
     """Baseline Correction through regression analysis, consists in
     (1) determining, through regression analysis (least-squares-fit method), the polynomial curve that best
     fits the time-acceleration pairs of values and then
@@ -48,13 +45,13 @@ def baselinecorr(ts: list,
         disp = cumulative_trapezoid(vel, ts, initial=0)
         plot_obj_ori = [acc, vel, disp]
         plot_obj_corr = [cor_acc, cor_vel, cor_disp]
-        titles = ['acceleration', 'velocity', 'displacement']
-        fig, axs = plt.subplots(3, 1, figsize=(9, 9), sharex='all')
+        titles = ["acceleration", "velocity", "displacement"]
+        fig, axs = plt.subplots(3, 1, figsize=(9, 9), sharex="all")
         for i in range(3):
             ax = axs[i]
-            ax.plot(ts, plot_obj_ori[i], c='b', lw=1, label="origin")
-            ax.plot(ts, plot_obj_corr[i], c='r', lw=1, label="correction")
-            ax.hlines(0, np.min(ts), np.max(ts), lw=0.5, colors='k')
+            ax.plot(ts, plot_obj_ori[i], c="b", lw=1, label="origin")
+            ax.plot(ts, plot_obj_corr[i], c="r", lw=1, label="correction")
+            ax.hlines(0, np.min(ts), np.max(ts), lw=0.5, colors="k")
             ax.set_xlim(np.min(ts), np.max(ts))
             ax.grid(False)
             ax.set_ylabel(titles[i], fontsize=15)

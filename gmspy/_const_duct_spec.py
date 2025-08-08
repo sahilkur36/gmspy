@@ -8,24 +8,25 @@ from ._lin_dyna_resp import lida
 from ._resample import resample
 
 
-def const_duct_spec(dt: float,
-                    acc: Union[list, tuple, np.ndarray],
-                    Ts: Union[list, tuple, np.ndarray],
-                    harden_ratio: float = 0.02,
-                    damp_ratio: float = 0.05,
-                    analy_dt: float = None,
-                    mu: float = 5,
-                    niter: int = 100,
-                    tol: float = 0.01,
-                    n_jobs: int = 0
-                    ):
+def const_duct_spec(
+    dt: float,
+    acc: Union[list, tuple, np.ndarray],
+    Ts: Union[list, tuple, np.ndarray],
+    harden_ratio: float = 0.02,
+    damp_ratio: float = 0.05,
+    analy_dt: float = None,
+    mu: float = 5,
+    niter: int = 100,
+    tol: float = 0.01,
+    n_jobs: int = 0,
+):
     """Constant-ductility inelastic spectra.
     See
 
     * section 7.5 in Anil K. Chopra (DYNAMICS OF STRUCTURES, Fifth Edition, 2020) and
     * the notes "Inelastic Response Spectra" (CEE 541. Structural Dynamics) by Henri P. Gavin.
     * Papazafeiropoulos, George, and Vagelis Plevris.
-      "OpenSeismoMatlab: A new open-source software for strong ground motion data processing." 
+      "OpenSeismoMatlab: A new open-source software for strong ground motion data processing."
       Heliyon 4.9 (2018): e00784.
 
     Parameters
@@ -77,7 +78,7 @@ def const_duct_spec(dt: float,
     # np.savetxt(filename, Fdata, fmt="%f")
 
     def run(omegai: float):
-        k = mass * omegai ** 2
+        k = mass * omegai**2
         ue, ve, ae = lida(dt, acc, omegai, damp_ratio)
         upeak = np.max(np.abs(ue))
         fpeak = k * upeak
@@ -85,14 +86,16 @@ def const_duct_spec(dt: float,
         maxuy = np.max(np.abs(ue))
         fy = k * maxuy
         umax, vmax, amax, _, _ = sdf_response(
-            mass, damp_ratio, k, fy, harden_ratio, acc, analy_dt)
+            mass, damp_ratio, k, fy, harden_ratio, acc, analy_dt
+        )
         fybark = fy / fpeak
         mumin = (umax / upeak) / fybark
         # mumax
         minuy = upeak / (20 * mu)
         fy = k * minuy
         umax, vmax, amax, _, _ = sdf_response(
-            mass, damp_ratio, k, fy, harden_ratio, acc, analy_dt)
+            mass, damp_ratio, k, fy, harden_ratio, acc, analy_dt
+        )
         fybark = fy / fpeak
         mumax = (umax / upeak) / fybark
         # step 4d
@@ -104,13 +107,15 @@ def const_duct_spec(dt: float,
             # Step 5.(b) Solve for uy1
             fy = k * uy1
             umax, vmax, amax, _, _ = sdf_response(
-                mass, damp_ratio, k, fy, harden_ratio, acc, analy_dt)
+                mass, damp_ratio, k, fy, harden_ratio, acc, analy_dt
+            )
             fybark = fy / fpeak
             mu1 = (umax / upeak) / fybark
             # Step 5.(c) Solve for uy2
             fy = k * uy2
             umax, vmax, amax, _, _ = sdf_response(
-                mass, damp_ratio, k, fy, harden_ratio, acc, analy_dt)
+                mass, damp_ratio, k, fy, harden_ratio, acc, analy_dt
+            )
             fybark = fy / fpeak
             mu2 = (umax / upeak) / fybark
             S = (mu2 - mu1) / (uy2 - uy1)
@@ -130,7 +135,8 @@ def const_duct_spec(dt: float,
             # Step 5.(l)
             fy = k * uy2
             umax, vmax, amax, _, _ = sdf_response(
-                mass, damp_ratio, k, fy, harden_ratio, acc, analy_dt)
+                mass, damp_ratio, k, fy, harden_ratio, acc, analy_dt
+            )
             fybark = fy / fpeak
             mu2 = (umax / upeak) / fybark
             # Store the output values of the current iteration
@@ -139,7 +145,11 @@ def const_duct_spec(dt: float,
             # uyi = uy2
             # iteri = j
             # Step 5.(m) Check for convergence
-            if np.abs(uy1 - uy2) < 1e-5 * tol or np.abs(mu1 - mu2) < 1e-5 * tol or np.abs(mu2 - mu) < tol:
+            if (
+                np.abs(uy1 - uy2) < 1e-5 * tol
+                or np.abs(mu1 - mu2) < 1e-5 * tol
+                or np.abs(mu2 - mu) < tol
+            ):
                 # print(f"Current mui = {mui}")
                 break
         # find Sd, Sv, Sa
@@ -250,6 +260,6 @@ def sdf_response(m, zeta, k, Fy, alpha, acc, dt, uresidual=0, umaxprev=0):
             umax = np.abs(u)
         if np.abs(v) > vmax:
             vmax = np.abs(v)
-        if np.abs(a + acc[i-1]) > amax:
-            amax = np.abs(a + acc[i-1])
+        if np.abs(a + acc[i - 1]) > amax:
+            amax = np.abs(a + acc[i - 1])
     return umax, vmax, amax, u, up

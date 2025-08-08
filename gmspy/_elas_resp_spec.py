@@ -6,12 +6,14 @@ from joblib import Parallel, delayed
 from ._lin_dyna_resp import lida
 
 
-def elas_resp_spec(dt: float,
-                   acc: Union[list, tuple, np.ndarray],
-                   Ts: Union[list, tuple, np.ndarray],
-                   damp_ratio: float = 0.05,
-                   method: str = "nigam_jennings",
-                   n_jobs: int = 0) -> np.ndarray:
+def elas_resp_spec(
+    dt: float,
+    acc: Union[list, tuple, np.ndarray],
+    Ts: Union[list, tuple, np.ndarray],
+    damp_ratio: float = 0.05,
+    method: str = "nigam_jennings",
+    n_jobs: int = 0,
+) -> np.ndarray:
     """Computing the Elastic Response Spectrum.
 
     Parameters

@@ -1,9 +1,10 @@
-import numpy as np
+from collections import defaultdict, namedtuple
 from pathlib import Path
-from rich import print
-from collections import namedtuple, defaultdict
-from ._load_peer import loadPEER
 
+import numpy as np
+from rich import print
+
+from ._load_peer import loadPEER
 
 
 def _read_by_suffix(suffix: str, file_path):
@@ -18,10 +19,25 @@ def _read_by_suffix(suffix: str, file_path):
 
 def _make_gm_data(data, vertical_factor=0.65, print_info=True):
     GMdata = dict()
-    ver_suffixs = ('UP', 'DWN', 'V', 'VER', 'UD', "V1", "V2", "UD", "Z", "Z1", "Z2", "DN")
+    ver_suffixs = (
+        "UP",
+        "DWN",
+        "V",
+        "VER",
+        "UD",
+        "V1",
+        "V2",
+        "UD",
+        "Z",
+        "Z1",
+        "Z2",
+        "DN",
+    )
     k, num = 0, len(data)
     for rsn, values in data.items():
-        GM = namedtuple("GM", ["tsgH1", "tsgH2", "tsgV3", "times", "dt", "npts", "filenames"])
+        GM = namedtuple(
+            "GM", ["tsgH1", "tsgH2", "tsgV3", "times", "dt", "npts", "filenames"]
+        )
         length = np.min([len(v.tsg) for v in values])
         idxs = np.argsort([np.max(np.abs(v.tsg)) for v in values])[::-1]
         ver_name, names, tsg = "", [], dict()
@@ -54,22 +70,28 @@ def _make_gm_data(data, vertical_factor=0.65, print_info=True):
             names.append(values[idxs[0]].file_name)
         dt = values[0].dt
         GMdata[rsn] = GM(
-            tsgH1=tsg["H1"], tsgH2=tsg["H2"], tsgV3=tsg["V3"],
+            tsgH1=tsg["H1"],
+            tsgH2=tsg["H2"],
+            tsgV3=tsg["V3"],
             times=np.arange(length) * dt,
-            dt=dt, npts=length, filenames=names
+            dt=dt,
+            npts=length,
+            filenames=names,
         )
         if print_info:
-            print(f"Info:: RSN={rsn} has been read and stored, {k + 1}/{num}, {(k+1)/num*100:.0f}%")
+            print(
+                f"Info:: RSN={rsn} has been read and stored, {k + 1}/{num}, {(k + 1) / num * 100:.0f}%"
+            )
         k += 1
     return GMdata
 
 
 def loadPEERbatch(
-        file_path: str,
-        vertical_factor: float = 0.65,
-        print_info: bool = True,
-        return_vel: bool = False,
-        return_disp: bool = False
+    file_path: str,
+    vertical_factor: float = 0.65,
+    print_info: bool = True,
+    return_vel: bool = False,
+    return_disp: bool = False,
 ):
     """Read PEER ground motion data under a certain path in batches.
     The requirement is that the data has been decompressed into `*.AT2`, `*.VT2`, `*.DT2` files.
@@ -144,7 +166,9 @@ def loadPEERbatch(
         disp_data = _make_gm_data(disps, vertical_factor, print_info)
         DATA.append(disp_data)
     if print_info:
-        print(f"Info:: All {len(accels)} groups of ground motions have been read and stored!")
+        print(
+            f"Info:: All {len(accels)} groups of ground motions have been read and stored!"
+        )
     if len(DATA) == 1:
         return DATA[0]
     else:

@@ -1,18 +1,21 @@
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy import signal
 from typing import Union
 
-def freq_filt(dt: float,
-              acc: Union[list, tuple, np.ndarray],
-              ftype: str = "Butterworth",
-              btype: str = "bandpass",
-              order: int = 4,
-              freq1: float = 0.1,
-              freq2: float = 24.99,
-              rp: float = 3,
-              plot: bool = False
-              ):
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy import signal
+
+
+def freq_filt(
+    dt: float,
+    acc: Union[list, tuple, np.ndarray],
+    ftype: str = "Butterworth",
+    btype: str = "bandpass",
+    order: int = 4,
+    freq1: float = 0.1,
+    freq2: float = 24.99,
+    rp: float = 3,
+    plot: bool = False,
+):
     """Filtering employed to remove unwanted frequency components from a given acceleration signal.
 
     .. note::
@@ -56,18 +59,20 @@ def freq_filt(dt: float,
     """
     # check
     acc = np.array(acc)
-    if btype not in ['lowpass', 'highpass', 'bandpass', 'bandstop']:
+    if btype not in ["lowpass", "highpass", "bandpass", "bandstop"]:
         raise ValueError(
-            f"error btype={btype}, should one of ('lowpass', 'highpass', 'bandpass', 'bandstop')!")
-    if ftype.lower() not in ['butterworth', 'chebyshev', 'bessel']:
+            f"error btype={btype}, should one of ('lowpass', 'highpass', 'bandpass', 'bandstop')!"
+        )
+    if ftype.lower() not in ["butterworth", "chebyshev", "bessel"]:
         raise ValueError(
-            f"error ftype={ftype}, should one of ('Butterworth', 'Chebyshev', 'Bessel')!")
-    if ftype.lower() == 'butterworth':
-        ftype = 'butter'
-    elif ftype.lower() == 'chebyshev':
-        ftype = 'cheby1'
-    elif ftype.lower() == 'bessel':
-        ftype = 'bessel'
+            f"error ftype={ftype}, should one of ('Butterworth', 'Chebyshev', 'Bessel')!"
+        )
+    if ftype.lower() == "butterworth":
+        ftype = "butter"
+    elif ftype.lower() == "chebyshev":
+        ftype = "cheby1"
+    elif ftype.lower() == "bessel":
+        ftype = "bessel"
     # filter
     if btype.startswith("l") or btype.startswith("h"):
         freq = freq1
@@ -76,24 +81,25 @@ def freq_filt(dt: float,
     fs = 1 / dt
     if freq2 > (fs / 2):
         raise ValueError(
-            "freq2 cannot be higher than 1/2 of the record's time-step frequency!")
+            "freq2 cannot be higher than 1/2 of the record's time-step frequency!"
+        )
     # Lowpass Butterworth Transfer Function
     wn = 2 * freq / fs
-    ba = signal.iirfilter(order, wn, rp=rp,
-                          btype=btype, ftype=ftype, analog=False)
+    ba = signal.iirfilter(order, wn, rp=rp, btype=btype, ftype=ftype, analog=False)
     acc_filt = signal.filtfilt(*ba, acc)
 
     if plot:
         t = np.arange(len(acc)) * dt
         fig, ax = plt.subplots(figsize=(9, 4))
-        ax.plot(t, acc, c='b', lw=1, label="origin")
-        ax.plot(t, acc_filt, c='r', lw=1, label="filtering")
-        ax.hlines(0, np.min(t), np.max(t), lw=0.5, colors='k')
+        ax.plot(t, acc, c="b", lw=1, label="origin")
+        ax.plot(t, acc_filt, c="r", lw=1, label="filtering")
+        ax.hlines(0, np.min(t), np.max(t), lw=0.5, colors="k")
         ax.set_xlim(np.min(t), np.max(t))
         ax.grid(False)
         ax.set_xlabel("Time (s)", fontsize=15)
-        ax.set_ylabel('acceleration', fontsize=15)
+        ax.set_ylabel("acceleration", fontsize=15)
         ax.tick_params(labelsize=12)
         ax.legend(fontsize=12)
         plt.show()
+    return acc_filt
     return acc_filt

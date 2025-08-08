@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import re
-import numpy as np
-from pathlib import Path
 from collections import namedtuple
-from typing import Union, NamedTuple
+from pathlib import Path
+from typing import NamedTuple, Union
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def loadPEER(filename: Union[str, Path, None] = None, plot: bool = False) -> NamedTuple:
@@ -38,6 +39,7 @@ def loadPEER(filename: Union[str, Path, None] = None, plot: bool = False) -> Nam
     if filename is None:
         import tkinter as tk
         from tkinter import filedialog
+
         root = tk.Tk()
         root.withdraw()
         root.call("wm", "attributes", ".", "-topmost", True)
@@ -49,7 +51,7 @@ def loadPEER(filename: Union[str, Path, None] = None, plot: bool = False) -> Nam
         file_name = file_path.stem
 
     ends = file_path.suffix.lower()
-    if ends not in ('.at2', '.vt2', '.dt2'):
+    if ends not in (".at2", ".vt2", ".dt2"):
         raise ValueError("Error! Not PEER database, only .AT2 is supported.!")
 
     with open(file_path, "r") as f:
@@ -76,9 +78,9 @@ def loadPEER(filename: Union[str, Path, None] = None, plot: bool = False) -> Nam
     GM = namedtuple("GM", ["tsg", "times", "dt", "npts", "RSN", "file_name", "unit"])
 
     if plot:
-        ylabels = {'.at2': 'acc', '.vt2': 'vel', '.dt2': 'disp'}
+        ylabels = {".at2": "acc", ".vt2": "vel", ".dt2": "disp"}
         fig, ax = plt.subplots(figsize=(9, 4))
-        ax.plot(time, tsg, c='k', lw=1.2)
+        ax.plot(time, tsg, c="k", lw=1.2)
         ax.set_xlabel("Time (s)", fontsize=15)
         ax.set_ylabel(ylabels[ends] + f" ({unit})", fontsize=15)
         ax.set_title(f"RSN={RSN} DT={dt} NPTS={npts} UNIT={unit}", fontsize=15)
@@ -88,4 +90,3 @@ def loadPEER(filename: Union[str, Path, None] = None, plot: bool = False) -> Nam
         plt.show()
 
     return GM._make([tsg, time, dt, npts, RSN, file_name, unit])
-

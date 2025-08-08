@@ -31,10 +31,9 @@ def resample(dt: float, acc: Union[list, tuple, np.ndarray], dti: float):
     NANxgtt = np.argwhere(np.isnan(acc)).ravel()
     errxgtt = np.argwhere(np.diff(NANxgtt) > 1).ravel()
     if any(errxgtt):
-        raise ValueError(
-            'Non consecutive NaNs in resampled acceleration time history')
+        raise ValueError("Non consecutive NaNs in resampled acceleration time history")
     if any(NANxgtt):
-        acc = acc[:NANxgtt[0] - 1]
+        acc = acc[: NANxgtt[0] - 1]
     # Time scale
     time = np.arange(len(acc)) * dti
     return time, acc
